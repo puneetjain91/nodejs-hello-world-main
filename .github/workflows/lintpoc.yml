@@ -37,6 +37,7 @@ jobs:
     - name: npm test
       id: npm_test
       run: npm test
+    - run: npm install eslint --save-dev
     - uses: act10ns/slack@v1
       with:
         status: ${{ job.status }}
