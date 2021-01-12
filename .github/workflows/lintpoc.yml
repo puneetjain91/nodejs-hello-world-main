@@ -46,4 +46,14 @@ jobs:
         status: ${{ job.status }}
         steps: ${{ toJson(steps) }}
         slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-      if: always() 
+      if: always()
+    - name: Blackduck-SCA Scan
+      uses: blackducksoftware/github-action@2.0.0
+      with:
+        args: |
+          --blackduck.url="${{ secrets.BLACKDUCK_URL}}" \
+          --blackduck.api.token="${{ secrets.BLACKDUCK_API_TOKEN}}" \
+          --logging.level.com.synopsys.integration="DEBUG" \
+          --detect.tools="DETECTOR" \
+          --detect.project.name="${{ github.event.repository.name }}" \
+          --detect.project.version.distribution="SAAS" \
