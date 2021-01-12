@@ -30,16 +30,16 @@ jobs:
     - name: npm install
       id: npm_install
       run: npm install
-    - name: npm build
-      id: npm_build
-      run: npm run build --if-present
-    - run: npm install jasmine-node
     - name: npm test
       id: npm_test
       run: npm test
     - name: npm eslint
       id: npm_eslint
       run: npm install eslint --save-dev
+    - name: npm build
+      id: npm_build
+      run: npm run build --if-present
+    - run: npm install jasmine-node
     - uses: act10ns/slack@v1
       with:
         status: ${{ job.status }}
