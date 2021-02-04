@@ -41,19 +41,4 @@ jobs:
       id: npm_build
       run: npm run build --if-present
     
-    - uses: act10ns/slack@v1
-      with:
-        status: ${{ job.status }}
-        steps: ${{ toJson(steps) }}
-        slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-      if: always()
-    - name: Blackduck-SCA Scan
-      uses: blackducksoftware/github-action@2.0.0
-      with:
-        args: |
-          --blackduck.url="${{ secrets.BLACKDUCK_URL}}" \
-          --blackduck.api.token="${{ secrets.BLACKDUCK_API_TOKEN}}" \
-          --logging.level.com.synopsys.integration="DEBUG" \
-          --detect.tools="DETECTOR" \
-          --detect.project.name="${{ github.event.repository.name }}" \
-          --detect.project.version.distribution="SAAS" \
+
