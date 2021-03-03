@@ -2,43 +2,84 @@ name: Node.js CI
 
 on: [push]
 
-jobs:
-  build:
+# jobs:
+#   build:
 
-    runs-on: ubuntu-latest
+#     runs-on: ubuntu-latest
     
 
-    strategy:
-      matrix:
-        node-version: [12.x]
-    env: 
-       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#     strategy:
+#       matrix:
+#         node-version: [12.x]
+#     env: 
+#        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+#     steps:
+#     - uses: act10ns/slack@v1
+#       with:
+#           status: starting
+#           channel: '#lintsteps'
+#           if: always()
+    
+#     - uses: actions/checkout@v2
+#     - name: Use Node.js ${{ matrix.node-version }}
+#       id: checkout
+#       uses: actions/setup-node@v1
+#       with:
+#         node-version: ${{ matrix.node-version }}
+#     - name: npm install
+#       id: npm_install
+#       run: npm install
+#     - run: npm install jasmine-node
+#     - name: npm test
+#       id: npm_test
+#       run: npm test
+#     - name: npm eslint
+#       id: npm_eslint
+#       run: npm install eslint --save-dev
+#     - name: npm build
+#       id: npm_build
+#       run: npm run build --if-present
+jobs:
+  node_test:
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: act10ns/slack@v1
-      with:
-          status: starting
-          channel: '#lintsteps'
-          if: always()
-    
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      id: checkout
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: npm install
-      id: npm_install
-      run: npm install
-    - run: npm install jasmine-node
-    - name: npm test
-      id: npm_test
-      run: npm test
-    - name: npm eslint
-      id: npm_eslint
-      run: npm install eslint --save-dev
-    - name: npm build
-      id: npm_build
-      run: npm run build --if-present
-    
+      - uses: actions/checkout@v1
+      - name: Node.JS 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: "10.x"
+#       - name: Cache node modules
+#         uses: actions/cache@v1
+#         with:
+#           path: node_modules
+#           key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+#           restore-keys: |
+#             ${{ runner.OS }}-build-${{ env.cache-name }}-
+#             ${{ runner.OS }}-build-
+#             ${{ runner.OS }}-
+      - name: Install Node Dependencies
+        run: npm install
+        env:
+          CI: TRUE
+      - name: Test Code Linting
+        run: npm run lint
+      - name: Save Code Linting Report JSON
+        # npm script for ESLint
+        # eslint --output-file eslint_report.json --format json src
+        # See https://eslint.org/docs/user-guide/command-line-interface#options
+        run: npm run lint:report
+        # Continue to the next step even if this fails
+        continue-on-error: true
+      - name: Annotate Code Linting Results
+        uses: ataylorme/eslint-annotate-action@1.1.2
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          report-json: "eslint_report.json"
+      - name: Upload ESLint report
+        uses: actions/upload-artifact@v1
+        with:
+          name: eslint_report.json
+          path: eslint_report.json    
 
