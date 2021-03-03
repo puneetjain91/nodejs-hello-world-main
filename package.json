@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "eslint": "eslint ./",
+    //"eslint": "eslint ./",
     "eslint": "eslint --output-file eslint_report.json --format json src",
     "eslint-fix": "eslint ./ --fix",
     "test": "./node_modules/.bin/jasmine-node spec --junitreport --forceexit",
