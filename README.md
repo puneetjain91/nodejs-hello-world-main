@@ -11,4 +11,5 @@ Step 2). Run below command to run test case and to generate XML report. xml file
 
 Step 3). Run below command to statically analyzes code to find problems
 
-	npm run eslint	
+	npm run eslint testing gitmerge:wq
+
